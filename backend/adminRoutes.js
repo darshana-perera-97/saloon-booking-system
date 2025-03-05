@@ -37,12 +37,17 @@ router.post("/admin/create-merchant", (req, res) => {
     contactNumber,
     email,
     password,
+    availability, // Expecting availability as a boolean value
   } = req.body;
 
   if (!merchantName || !email || !password) {
     return res
       .status(400)
       .json({ error: "merchantName, email, and password are required" });
+  }
+
+  if (availability === undefined) {
+    return res.status(400).json({ error: "Availability is required" });
   }
 
   let merchants = readMerchants();
@@ -54,6 +59,7 @@ router.post("/admin/create-merchant", (req, res) => {
     contactNumber,
     email,
     password, // Ideally, hash this before storing
+    availability, // Include availability field
   };
 
   merchants.push(newMerchant);
@@ -62,6 +68,34 @@ router.post("/admin/create-merchant", (req, res) => {
   res.json({
     message: "Merchant created successfully!",
     merchant: newMerchant,
+  });
+});
+
+// Edit Merchant Availability API
+router.put("/admin/merchants/:id/availability", (req, res) => {
+  const { id } = req.params;
+  const { availability } = req.body;
+
+  if (availability === undefined || typeof availability !== "boolean") {
+    return res.status(400).json({ error: "Availability must be a boolean" });
+  }
+
+  let merchants = readMerchants();
+  const merchantIndex = merchants.findIndex(
+    (merchant) => merchant.merchantId === parseInt(id)
+  );
+
+  if (merchantIndex === -1) {
+    return res.status(404).json({ error: "Merchant not found" });
+  }
+
+  // Update the availability status
+  merchants[merchantIndex].availability = availability;
+  writeMerchants(merchants);
+
+  res.json({
+    message: `Merchant availability updated successfully!`,
+    merchant: merchants[merchantIndex],
   });
 });
 

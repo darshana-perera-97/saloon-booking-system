@@ -9,6 +9,7 @@ const CreateMerchant = () => {
     contactNumber: "",
     email: "",
     password: "",
+    availability: false, // Add availability field with a default value of false
   });
 
   const [message, setMessage] = useState("");
@@ -16,7 +17,11 @@ const CreateMerchant = () => {
 
   // Handle input changes
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? checked : value, // Handle checkbox specifically
+    });
   };
 
   // Handle form submission
@@ -46,6 +51,7 @@ const CreateMerchant = () => {
           contactNumber: "",
           email: "",
           password: "",
+          availability: false, // Reset availability to false after successful form submission
         });
       } else {
         setError(data.error || "Something went wrong");
@@ -122,6 +128,17 @@ const CreateMerchant = () => {
             value={formData.password}
             onChange={handleChange}
             required
+          />
+        </Form.Group>
+
+        {/* Availability Checkbox */}
+        <Form.Group className="mb-3">
+          <Form.Check
+            type="checkbox"
+            name="availability"
+            label="Available"
+            checked={formData.availability}
+            onChange={handleChange}
           />
         </Form.Group>
 
