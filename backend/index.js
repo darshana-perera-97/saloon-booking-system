@@ -12,9 +12,9 @@ app.use(cors());
 app.use(express.json());
 
 // Use separate route files
-app.use("/api", adminRoutes);
-app.use("/api", frontendRoutes);
-app.use("/api", merchantRoutes);
+app.use("/", adminRoutes);
+app.use("/", frontendRoutes);
+app.use("/", merchantRoutes);
 
 // Start the server
 app.listen(PORT, () => {
